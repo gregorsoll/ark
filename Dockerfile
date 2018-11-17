@@ -46,6 +46,11 @@ run su - steam -c "curl -sL http://git.io/vtf5N | bash -s -- --me --perform-user
 #install ark
 run su - steam -c "arkmanager install --verbose --me"
 
+#install mods
+run su - steam -c "arkmanager installmod 893904615,710450473,821530042,600015460,719928795,699984901,733089781,895711211,497432858,764755314,731604991"
+
+
+
 #install ark manually not needed because of arkmanager
 #run su - steam -c "mkdir ark && ./steamcmd.sh +login anonymous +force_install_dir ./ark +app_update 376030 +quit"
 
@@ -62,14 +67,19 @@ run su - steam -c "arkmanager install --verbose --me"
 #ark_ServerAdminPassword="keyboardcat"                               # ARK server admin password, KEEP IT SAFE!
 #ark_MaxPlayers="70"
 
+WORKDIR /mone/steam/ARK
+USER steam
+
 
 
 # startsequence
-#docker run -v D:\DockerVm\steam\ark\Saved:/home/steam/ARK/ShooterGame/Saved -v D:\DockerVm\steam\ark\instances:/home/steam/.config/arkmanager/instances -v D:\DockerVm\steam\ark\downloading:/home/steam/ARK/steamapps/downloading -p 7778:7778 -p 27016:27016 -p 32330:32330 -it 5a23ce36c304 bash
-#docker run -v /home/gregor/ark/Saved:/home/steam/ARK/ShooterGame/Saved -v /home/gregor/ark/instances:/home/steam/.config/arkmanager/instances -v /home/gregor/ark/downloading:/home/steam/ARK/steamapps/downloading -p 7778:7778 -p 27016:27016 -p 32330:32330 -it 5a23ce36c304 bash
-# arkmanager update
-# arkmanager run 
+CMD arkmanager run 
 
 
 
 STOPSIGNAL SIGINT
+
+
+
+#to staRT THE CONTAINER 
+#docker run -d -v /opt/ark/Saved:/home/steam/ARK/ShooterGame/Saved -v /opt/ark/instances:/home/steam/.config/arkmanager/instances -v /opt/ark/downloading:/home/steam/ARK/steamapps/downloading -p 7778:7778 -p 27015:27015/udp ark:latest
