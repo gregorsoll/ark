@@ -3,33 +3,28 @@
 #/home/steam/.config/arkmanager/instances     for arkmanager config file
 
 
-from centos
+from ubuntu:latest
 ENV container docker
-RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == \
-systemd-tmpfiles-setup.service ] || rm -f $i; done); \
-rm -f /lib/systemd/system/multi-user.target.wants/*;\
-rm -f /etc/systemd/system/*.wants/*;\
-rm -f /lib/systemd/system/local-fs.target.wants/*; \
-rm -f /lib/systemd/system/sockets.target.wants/*udev*; \
-rm -f /lib/systemd/system/sockets.target.wants/*initctl*; \
-rm -f /lib/systemd/system/basic.target.wants/*;\
-rm -f /lib/systemd/system/anaconda.target.wants/*;
-VOLUME [ "/sys/fs/cgroup" ]
-CMD ["/usr/sbin/init"]
-
 
 #ports for ark
-EXPOSE 27016/udp
-EXPOSE 27016/tcp
-EXPOSE 7778/udp
-EXPOSE 7778/tcp
-EXPOSE 32330/tcp
+#EXPOSE 27016/udp
+#EXPOSE 27016/tcp
+#EXPOSE 7778/udp
+#EXPOSE 7778/tcp
+#EXPOSE 32330/tcp
 
 #requirements
-RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && yum -y install glibc.i686 libstdc++.i686 sudo perl-Compress-Zlib lsof bzip2 nano ntpdate && yum -y update && yum clean all 
+#RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+# && yum -y install glibc.i686 libstdc++.i686 sudo perl-Compress-Zlib lsof bzip2 nano ntpdate && yum -y update && yum clean all 
+RUN apt update
+RUN apt install -y bzip2 nano curl lib32stdc++6 zlib1g zlib1g-dev libcompress-zlib-perl
+#RUN add-apt-repository multiverse
 
+#RUN yum -y install glibc.i686 libstdc++.i686 sudo perl-Compress-Zlib lsof bzip2 nano && yum -y update && dnf clean packages
+#&& yum clean all
 #steamcmd
-RUN useradd -m steam && usermod -aG wheel steam &&  su - steam -c "mkdir steamcmd && cd steamcmd && curl -sqL 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz' | tar zxvf - && ./steamcmd.sh +quit"
+RUN adduser --disabled-password --gecos "" steam  && adduser steam sudo
+RUN su - steam -c "mkdir steamcmd && cd steamcmd && curl -sqL 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz' | tar zxvf - && ./steamcmd.sh +quit"
 
 
 #RUN iptables -I INPUT -p udp --dport 27016 -j ACCEPT && iptables -I INPUT -p tcp --dport 27016 -j ACCEPT && iptables -I INPUT -p udp --dport 7778 -j ACCEPT &&  iptables -I INPUT -p tcp --dport 7778 -j ACCEPT && iptables -I INPUT -p tcp --dport 32330 -j ACCEPT
@@ -41,13 +36,13 @@ RUN useradd -m steam && usermod -aG wheel steam &&  su - steam -c "mkdir steamcm
 #firewall-cmd --reload
 
 #arkmanager
-run su - steam -c "curl -sL http://git.io/vtf5N | bash -s -- --me --perform-user-install"
+run su - steam -c "curl -sL http://git.io/vtf5N | bash -s -- --me --perform-user-install --yes-i-really-want-to-perform-a-user-install"
 
 #install ark
 run su - steam -c "arkmanager install --verbose --me"
 
 #install mods
-run su - steam -c "arkmanager installmod 893904615,710450473,821530042,600015460,719928795,699984901,733089781,895711211,497432858,764755314,731604991"
+#run su - steam -c "arkmanager installmod 893904615,710450473,821530042,600015460,719928795,699984901,733089781,895711211,497432858,764755314,731604991"
 
 
 
@@ -56,7 +51,7 @@ run su - steam -c "arkmanager installmod 893904615,710450473,821530042,600015460
 
 
 # minimum main.cfg for arkmanager / if installed as user then in /home/steam/.config/arkmanager/instances
-#arkserverroot="/home/steam/ARK"                                     # path of your ARK server files (default ~/ARK)
+#arkserverroot="/home/steam/ARK"                                     # path of youxyr ARK server files (default ~/ARK)
 #serverMap="TheIsland"                                               # server map (default TheIsland)
 #ark_RCONEnabled="True"                                              # Enable RCON Protocol
 #ark_RCONPort="32330"                                                # RCON Port
@@ -67,13 +62,12 @@ run su - steam -c "arkmanager installmod 893904615,710450473,821530042,600015460
 #ark_ServerAdminPassword="keyboardcat"                               # ARK server admin password, KEEP IT SAFE!
 #ark_MaxPlayers="70"
 
-WORKDIR /mone/steam/ARK
+WORKDIR /root/steam/ARK
 USER steam
 
 
-
 # startsequence
-CMD arkmanager run 
+CMD /home/steam/bin/arkmanager installmods && /home/steam/bin/arkmanager update && /home/steam/bin/arkmanager run 
 
 
 

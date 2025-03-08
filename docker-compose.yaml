@@ -1,0 +1,21 @@
+version: '3.3'
+
+services:
+  ark:
+    image: ark:latest
+    container_name: ark
+    networks:
+      - default
+    restart: unless-stopped
+    ports:
+      - "27016:27016/udp"
+      - "27016:27016"
+    volumes:
+      - ./data:/home/steam/ARK/ShooterGame/Saved
+      - ./DefaultGameUserSettings.ini:/home/steam/ARK/ShooterGame/Config/DefaultGameUserSettings.ini
+      - ./Game.ini:/home/steam/ARK/Game.ini  
+      - ./Game.ini:/home/steam/ARK/ShooterGame/Config/Game.ini
+      - ./Game.ini:/home/steam/ARK/ShooterGame/Saved/Config/LinuxServer/Game.ini
+      - ./main.cfg:/home/steam/.config/arkmanager/instances/main.cfg
+    networks:
+      - default
